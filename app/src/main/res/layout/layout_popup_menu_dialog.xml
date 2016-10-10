@@ -74,8 +74,9 @@
             android:layout_height="match_parent"
             android:background="@android:color/darker_gray" />
 
-        <TextView
+        <Button
             android:id="@+id/shared_wifi_settings"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

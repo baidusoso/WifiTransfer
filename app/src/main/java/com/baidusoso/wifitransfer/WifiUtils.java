@@ -15,7 +15,7 @@ public class WifiUtils {
     public static String getWifiIp(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifimanager.getConnectionInfo();
-        if (wifiInfo != null) {
+        if (wifiInfo != null && wifiInfo.getIpAddress() > 0) {
             return intToIp(wifiInfo.getIpAddress());
         }
         return null;

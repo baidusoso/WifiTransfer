@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hwangjr.rxbus.RxBus;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -65,6 +67,7 @@ public class PopupMenuDialog {
             Timber.d("dialog dismiss!");
             if (mUnbinder != null) {
                 mUnbinder.unbind();
+                RxBus.get().post(Constants.RxBusEventType.POPUP_MENU_DIALOG_SHOW_DISMISS,(Integer)0);
             }
         });
 

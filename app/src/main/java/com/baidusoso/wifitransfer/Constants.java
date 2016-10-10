@@ -5,4 +5,7 @@ package com.baidusoso.wifitransfer;
  */
 
 public class Constants {
+    public static final class RxBusEventType {
+        public static final String POPUP_MENU_DIALOG_SHOW_DISMISS = "POPUP MENU DIALOG DISMISS";
+    }
 }

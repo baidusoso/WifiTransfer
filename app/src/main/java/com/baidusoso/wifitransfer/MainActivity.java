@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements Animator.Animator
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        WebService.stop(this);
         if (mUnbinder != null) {
             mUnbinder.unbind();
         }
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements Animator.Animator
 
     @Subscribe(tags = {@Tag(Constants.RxBusEventType.POPUP_MENU_DIALOG_SHOW_DISMISS)})
     public void onPopupMenuDialogDismiss(Integer type) {
+        WebService.stop(this);
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mFab, "translationY", mFab.getHeight() * 2, 0).setDuration(200L);
         objectAnimator.setInterpolator(new AccelerateInterpolator());
         objectAnimator.start();
@@ -65,23 +67,20 @@ public class MainActivity extends AppCompatActivity implements Animator.Animator
 
     @Override
     public void onAnimationStart(Animator animation) {
-        Timber.d("onAnimationStart:%s", Thread.currentThread().getName());
+        WebService.start(this);
         new PopupMenuDialog(this).builder().setCancelable(false)
                 .setCanceledOnTouchOutside(false).show();
     }
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        Timber.d("onAnimationEnd:%s", Thread.currentThread().getName());
     }
 
     @Override
     public void onAnimationCancel(Animator animation) {
-        Timber.d("onAnimationCancel:%s", Thread.currentThread().getName());
     }
 
     @Override
     public void onAnimationRepeat(Animator animation) {
-        Timber.d("onAnimationRepeat:%s", Thread.currentThread().getName());
     }
 }

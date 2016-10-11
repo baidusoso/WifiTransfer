@@ -1,3 +1,5 @@
 # WifiTransfer
 ## Phone ScreenShot
-![](./screenshot/phone1.png =144)
+<img src="./screenshot/phone1.png" width="30%"/>
+<img src="./screenshot/phone1.png" width="30%"/>
+<img src="./screenshot/phone1.png" width="30%"/>

@@ -1,3 +1,3 @@
 # WifiTransfer
 ## Phone ScreenShot
-![](./screenshot/phone1.png =144*256)
+![](./screenshot/phone1.png =144)

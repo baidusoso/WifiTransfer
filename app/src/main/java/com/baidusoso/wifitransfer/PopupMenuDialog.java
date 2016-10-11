@@ -1,6 +1,5 @@
 package com.baidusoso.wifitransfer;
 
-import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,8 +45,6 @@ public class PopupMenuDialog {
     TextView mTxtStateHint;
     @BindView(R.id.shared_wifi_address)
     TextView mTxtAddress;
-    @BindView(R.id.shared_wifi_cancel)
-    Button mBtnCancel;
     @BindView(R.id.shared_wifi_settings)
     Button mBtnWifiSettings;
     @BindView(R.id.shared_wifi_button_split_line)
@@ -76,15 +72,7 @@ public class PopupMenuDialog {
         dialog = new Dialog(context, R.style.PopupMenuDialogStyle);
         dialog.setContentView(view);
         mUnbinder = ButterKnife.bind(this, dialog);
-        dialog.setOnDismissListener((DialogInterface dialog) -> {
-            Timber.d("dialog dismiss!");
-            if (mUnbinder != null) {
-                mUnbinder.unbind();
-                RxBus.get().post(Constants.RxBusEventType.POPUP_MENU_DIALOG_SHOW_DISMISS, (Integer) 0);
-                unregisterWifiConnectChangedReceiver();
-                RxBus.get().unregister(PopupMenuDialog.this);
-            }
-        });
+        dialog.setOnDismissListener(this::onDialogDismiss);
 
         Window dialogWindow = dialog.getWindow();
         dialogWindow.setGravity(Gravity.LEFT | Gravity.BOTTOM);
@@ -134,7 +122,7 @@ public class PopupMenuDialog {
     }
 
     @Subscribe(tags = {@Tag(Constants.RxBusEventType.WIFI_CONNECT_CHANGE_EVENT)})
-    public void onPopupMenuDialogDismiss(NetworkInfo.State state) {
+    public void onWifiConnectStateChanged(NetworkInfo.State state) {
         checkWifiState(state);
     }
 
@@ -182,5 +170,15 @@ public class PopupMenuDialog {
         mTxtAddress.setText(String.format(context.getString(R.string.http_address), ipAddr, Constants.HTTP_PORT));
         mButtonSplitLine.setVisibility(View.GONE);
         mBtnWifiSettings.setVisibility(View.GONE);
+    }
+
+    void onDialogDismiss(DialogInterface dialog){
+        Timber.d("dialog dismiss!");
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            RxBus.get().post(Constants.RxBusEventType.POPUP_MENU_DIALOG_SHOW_DISMISS, Constants.MSG_DIALOG_DISMISS);
+            unregisterWifiConnectChangedReceiver();
+            RxBus.get().unregister(PopupMenuDialog.this);
+        }
     }
 }

@@ -29,11 +29,11 @@ dependencies {
     compile deps.supportDesign
     compile deps.butterknife
     apt deps.butterknifeCompiler
-    compile deps.retrofit2
-    compile deps.rxjava
-    compile deps.converterGson
-    compile deps.adapterRxjava
-    compile deps.rxandroid
+//    compile deps.retrofit2
+//    compile deps.rxjava
+//    compile deps.converterGson
+//    compile deps.adapterRxjava
+//    compile deps.rxandroid
     compile(deps.rxbus) {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }

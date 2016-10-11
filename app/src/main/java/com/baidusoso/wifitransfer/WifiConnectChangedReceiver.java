@@ -9,8 +9,6 @@ import android.os.Parcelable;
 
 import com.hwangjr.rxbus.RxBus;
 
-import timber.log.Timber;
-
 public class WifiConnectChangedReceiver extends BroadcastReceiver {
 
     @Override

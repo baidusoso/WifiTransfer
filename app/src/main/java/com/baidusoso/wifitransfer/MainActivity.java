@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.BounceInterpolator;
 
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -59,10 +58,12 @@ public class MainActivity extends AppCompatActivity implements Animator.Animator
 
     @Subscribe(tags = {@Tag(Constants.RxBusEventType.POPUP_MENU_DIALOG_SHOW_DISMISS)})
     public void onPopupMenuDialogDismiss(Integer type) {
-        WebService.stop(this);
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mFab, "translationY", mFab.getHeight() * 2, 0).setDuration(200L);
-        objectAnimator.setInterpolator(new AccelerateInterpolator());
-        objectAnimator.start();
+        if (type == Constants.MSG_DIALOG_DISMISS) {
+            WebService.stop(this);
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(mFab, "translationY", mFab.getHeight() * 2, 0).setDuration(200L);
+            objectAnimator.setInterpolator(new AccelerateInterpolator());
+            objectAnimator.start();
+        }
     }
 
     @Override

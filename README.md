@@ -44,30 +44,24 @@ response.code(500);//这个一定要和send()或者end()一起使用
 ```
 ## WIFI传输 HttpServer文件上传功能实现
 ```java
-server.post("/files", (AsyncHttpServerRequest request, AsyncHttpServerResponse response) -> {
+ server.post("/files", (AsyncHttpServerRequest request, AsyncHttpServerResponse response) -> {
                     final MultipartFormDataBody body = (MultipartFormDataBody) request.getBody();
                     body.setMultipartCallback((Part part) -> {
                         if (part.isFile()) {
-                            body.setDataCallback(new DataCallback() {
-                                @Override
-                                public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
-                                    fileUploadHolder.write(bb.getAllByteArray());
-                                    bb.recycle();
-                                }
+                            body.setDataCallback((DataEmitter emitter, ByteBufferList bb) -> {
+                                fileUploadHolder.write(bb.getAllByteArray());
+                                bb.recycle();
                             });
                         } else {
                             if (body.getDataCallback() == null) {
-                                body.setDataCallback(new DataCallback() {
-                                    @Override
-                                    public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
-                                        try {
-                                            String fileName = URLDecoder.decode(new String(bb.getAllByteArray()), "UTF-8");
-                                            fileUploadHolder.setFileName(fileName);
-                                        } catch (UnsupportedEncodingException e) {
-                                            e.printStackTrace();
-                                        }
-                                        bb.recycle();
+                                body.setDataCallback((DataEmitter emitter, ByteBufferList bb) -> {
+                                    try {
+                                        String fileName = URLDecoder.decode(new String(bb.getAllByteArray()), "UTF-8");
+                                        fileUploadHolder.setFileName(fileName);
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
                                     }
+                                    bb.recycle();
                                 });
                             }
                         }
@@ -80,3 +74,5 @@ server.post("/files", (AsyncHttpServerRequest request, AsyncHttpServerResponse r
                 }
         );
 ```
+这里上传有2个Part：一个文件名，另一个是文件内容。之所以用有文件名Part是为了支持中文文件名：在multipart/form-data上传文件所存的中文文件名会因为AndroidAsync采用ASCII导致乱码。因此新增一个文件名Part，内容是网页端JS对文件名进行encodeURL，Server端再URLDecoder.decode拿到中文文件名。
+这里涉及3个Callback:MultipartCallback、DataCallback和CompletedCallback。AndroidAsync采用NIO，处理请求体时候：每处理一个新的Part会回调MultipartCallback；通过多次回调DataCallback来接收文件内容；处理完所有的请求体回调CompletedCallback表示请求数据都已接收完毕，可以向客户端发送响应，如response.end()结束请求。

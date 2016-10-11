@@ -78,5 +78,6 @@ response.code(500);//这个一定要和send()或者end()一起使用
  * 这里涉及3个Callback:MultipartCallback、DataCallback和CompletedCallback。AndroidAsync采用NIO，处理请求体时候：每处理一个新的Part会回调MultipartCallback；通过多次回调DataCallback来接收文件内容；处理完所有的请求体回调CompletedCallback表示请求数据都已接收完毕，可以向客户端发送响应，如response.end()结束请求。
 ## TODO
 因AndroidAsync采用NIO，目前还不知道怎么获取上传文件的大小。在使用非HTML5浏览器（如IE7/IE8/IE9）时候，文件上传进度无法正确显示。
-## 版权声明
+
+## 版权声明 
 本项目参考《多看》实现的，网页端的资源于《多看》并稍作修改，不得用于任何商业用途，仅供学习研究使用，否则后果自负。

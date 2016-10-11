@@ -377,8 +377,6 @@ $(function() {
 	}
 	
 	function showHtml5View() {
-		$('#logo').append('<img src="images/logo5.jpg" />');
-        
 		var dragAree = $('<div id="drag_area"><div class="drag_hint">' + STRINGS.DRAG_TO_HERE + '</div></div)').addClass('normal').appendTo('#logo');
         $('#upload_hint').empty();
 		$('<div>'+STRINGS.SELECT_YOUR_FILES+'<br />'+STRINGS.SUPPORTED_FILE_TYPES+'</div>')
@@ -393,7 +391,6 @@ $(function() {
 	}
 	
 	function showHtml4View() {
-		$('#logo').append('<img src="images/logo.jpg" />').append('<div class="wifi">' + STRINGS.WIFI_AVAILABLE + '</div>');
         $('#upload_button').css('background-image', 'url("images/select_file1_rollover.jpg")');
 		$('#upload_hint').html(STRINGS.SELECT_YOUR_FILES+'<br />'+STRINGS.SUPPORTED_FILE_TYPES);
         $('<div class="button_lable">' + STRINGS.SELECT_BUTTON_LABLE + '</div>').prependTo("#upload_button")

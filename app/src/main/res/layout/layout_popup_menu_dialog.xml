@@ -30,7 +30,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
         android:scaleType="centerInside"
-        android:src="@drawable/shared__wifi_enable" />
+        android:src="@drawable/shared_wifi_enable" />
 
     <TextView
         android:id="@+id/shared_wifi_state_hint"
@@ -40,7 +40,7 @@
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:text="@string/pls_input_the_following_address_in_pc_browser"
-        android:textSize="15sp"/>
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/shared_wifi_address"
@@ -50,7 +50,8 @@
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:text="http://10.100.9.195:8081"
-        android:textSize="15sp"/>
+        android:textColor="@color/colorWifiConnected"
+        android:textSize="15sp" />
 
     <View
         android:layout_width="match_parent"

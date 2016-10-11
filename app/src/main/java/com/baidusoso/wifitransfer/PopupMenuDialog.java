@@ -49,11 +49,10 @@ public class PopupMenuDialog {
     Button mBtnWifiSettings;
     @BindView(R.id.shared_wifi_button_split_line)
     View mButtonSplitLine;
+    WifiConnectChangedReceiver mWifiConnectChangedReceiver = new WifiConnectChangedReceiver();
     private Context context;
     private Dialog dialog;
     private Display display;
-
-    WifiConnectChangedReceiver mWifiConnectChangedReceiver = new WifiConnectChangedReceiver();
 
     public PopupMenuDialog(Context context) {
         this.context = context;
@@ -143,8 +142,9 @@ public class PopupMenuDialog {
 
     void onWifiDisconnected() {
         mTxtTitle.setText(R.string.wlan_disabled);
+        mTxtTitle.setTextColor(context.getResources().getColor(android.R.color.black));
         mTxtSubTitle.setVisibility(View.VISIBLE);
-        mImgLanState.setImageResource(R.drawable.shared__wifi_shut_down);
+        mImgLanState.setImageResource(R.drawable.shared_wifi_shut_down);
         mTxtStateHint.setText(R.string.fail_to_start_http_service);
         mTxtAddress.setVisibility(View.GONE);
         mButtonSplitLine.setVisibility(View.VISIBLE);
@@ -153,8 +153,9 @@ public class PopupMenuDialog {
 
     void onWifiConnecting() {
         mTxtTitle.setText(R.string.wlan_enabled);
+        mTxtTitle.setTextColor(context.getResources().getColor(R.color.colorWifiConnected));
         mTxtSubTitle.setVisibility(View.GONE);
-        mImgLanState.setImageResource(R.drawable.shared__wifi_enable);
+        mImgLanState.setImageResource(R.drawable.shared_wifi_enable);
         mTxtStateHint.setText(R.string.retrofit_wlan_address);
         mTxtAddress.setVisibility(View.GONE);
         mButtonSplitLine.setVisibility(View.GONE);
@@ -163,8 +164,9 @@ public class PopupMenuDialog {
 
     void onWifiConnected(String ipAddr) {
         mTxtTitle.setText(R.string.wlan_enabled);
+        mTxtTitle.setTextColor(context.getResources().getColor(R.color.colorWifiConnected));
         mTxtSubTitle.setVisibility(View.GONE);
-        mImgLanState.setImageResource(R.drawable.shared__wifi_enable);
+        mImgLanState.setImageResource(R.drawable.shared_wifi_enable);
         mTxtStateHint.setText(R.string.pls_input_the_following_address_in_pc_browser);
         mTxtAddress.setVisibility(View.VISIBLE);
         mTxtAddress.setText(String.format(context.getString(R.string.http_address), ipAddr, Constants.HTTP_PORT));
@@ -172,7 +174,7 @@ public class PopupMenuDialog {
         mBtnWifiSettings.setVisibility(View.GONE);
     }
 
-    void onDialogDismiss(DialogInterface dialog){
+    void onDialogDismiss(DialogInterface dialog) {
         Timber.d("dialog dismiss!");
         if (mUnbinder != null) {
             mUnbinder.unbind();

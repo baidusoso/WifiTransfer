@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.text.TextUtils;
 
+import com.hwangjr.rxbus.RxBus;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
@@ -155,6 +156,7 @@ public class WebService extends Service {
                 File file = new File(Environment.getExternalStorageDirectory() + Constants.DIR_IN_SDCARD + path);
                 if (file.exists() && file.isFile()) {
                     file.delete();
+                    RxBus.get().post(Constants.RxBusEventType.LOAD_BOOK_LIST, 0);
                 }
             }
             response.end();
@@ -211,6 +213,7 @@ public class WebService extends Service {
                     request.setEndCallback((Exception e) -> {
                         fileUploadHolder.reset();
                         response.end();
+                        RxBus.get().post(Constants.RxBusEventType.LOAD_BOOK_LIST, 0);
                     });
                 }
 

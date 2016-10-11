@@ -11,7 +11,6 @@ import com.hwangjr.rxbus.RxBus;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
-import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.http.body.MultipartFormDataBody;
 import com.koushikdutta.async.http.body.Part;
 import com.koushikdutta.async.http.body.UrlEncodedFormBody;
@@ -53,11 +52,9 @@ public class WebService extends Service {
     private static final String EOT_CONTENT_TYPE = "image/vnd.ms-fontobject";
     private static final String MP3_CONTENT_TYPE = "audio/mp3";
     private static final String MP4_CONTENT_TYPE = "video/mpeg4";
-
+    FileUploadHolder fileUploadHolder = new FileUploadHolder();
     private AsyncHttpServer server = new AsyncHttpServer();
     private AsyncServer mAsyncServer = new AsyncServer();
-
-    FileUploadHolder fileUploadHolder = new FileUploadHolder();
 
     public static void start(Context context) {
         Intent intent = new Intent(context, WebService.class);
@@ -186,26 +183,20 @@ public class WebService extends Service {
                     final MultipartFormDataBody body = (MultipartFormDataBody) request.getBody();
                     body.setMultipartCallback((Part part) -> {
                         if (part.isFile()) {
-                            body.setDataCallback(new DataCallback() {
-                                @Override
-                                public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
-                                    fileUploadHolder.write(bb.getAllByteArray());
-                                    bb.recycle();
-                                }
+                            body.setDataCallback((DataEmitter emitter, ByteBufferList bb) -> {
+                                fileUploadHolder.write(bb.getAllByteArray());
+                                bb.recycle();
                             });
                         } else {
                             if (body.getDataCallback() == null) {
-                                body.setDataCallback(new DataCallback() {
-                                    @Override
-                                    public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
-                                        try {
-                                            String fileName = URLDecoder.decode(new String(bb.getAllByteArray()), "UTF-8");
-                                            fileUploadHolder.setFileName(fileName);
-                                        } catch (UnsupportedEncodingException e) {
-                                            e.printStackTrace();
-                                        }
-                                        bb.recycle();
+                                body.setDataCallback((DataEmitter emitter, ByteBufferList bb) -> {
+                                    try {
+                                        String fileName = URLDecoder.decode(new String(bb.getAllByteArray()), "UTF-8");
+                                        fileUploadHolder.setFileName(fileName);
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
                                     }
+                                    bb.recycle();
                                 });
                             }
                         }
@@ -216,7 +207,6 @@ public class WebService extends Service {
                         RxBus.get().post(Constants.RxBusEventType.LOAD_BOOK_LIST, 0);
                     });
                 }
-
         );
         server.get("/progress/.*", (final AsyncHttpServerRequest request,
                                     final AsyncHttpServerResponse response) -> {

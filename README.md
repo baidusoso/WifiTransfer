@@ -8,3 +8,5 @@
 <img src="./screenshot/phone1.png" width="30%"/>
 <img src="./screenshot/phone2.png" width="30%"/>
 <img src="./screenshot/phone3.png" width="30%"/>
+## 网页版截图
+<img src="./screenshot/web.png"/>

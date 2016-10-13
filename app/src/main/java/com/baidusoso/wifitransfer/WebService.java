@@ -323,7 +323,7 @@ public class WebService extends Service {
             totalSize = 0;
             this.recievedFile = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + this.fileName);
             Timber.d(recievedFile.getAbsolutePath());
-            recievedFile.mkdirs();
+            recievedFile.getParentFile().mkdirs();
             try {
                 fileOutPutStream = new BufferedOutputStream(new FileOutputStream(recievedFile));
             } catch (FileNotFoundException e) {

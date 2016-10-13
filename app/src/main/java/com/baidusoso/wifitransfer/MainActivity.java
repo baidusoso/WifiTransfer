@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements Animator.Animator
     public void loadBookList(Integer type) {
         Timber.d("loadBookList:" + Thread.currentThread().getName());
         List<String> books = new ArrayList<>();
-        File dir = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD);
+        File dir = Constants.DIR;
         if (dir.exists() && dir.isDirectory()) {
             String[] fileNames = dir.list();
             if (fileNames != null) {
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements Animator.Animator
             @Override
             public void call(Subscriber<? super List<String>> subscriber) {
                 List<String> books = new ArrayList<>();
-                File dir = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD);
+                File dir = Constants.DIR;
                 if (dir.exists() && dir.isDirectory()) {
                     String[] fileNames = dir.list();
                     for (String fileName : fileNames) {

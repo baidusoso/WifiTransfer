@@ -3,7 +3,6 @@ package com.baidusoso.wifitransfer;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -115,27 +114,29 @@ public class WebService extends Service {
         //query upload list
         server.get("/files", (AsyncHttpServerRequest request, AsyncHttpServerResponse response) -> {
             JSONArray array = new JSONArray();
-            File dir = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD);
+            File dir = Constants.DIR;
             if (dir.exists() && dir.isDirectory()) {
                 String[] fileNames = dir.list();
-                for (String fileName : fileNames) {
-                    File file = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + fileName);
-                    if (file.exists()) {
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("name", fileName);
-                            long fileLen = file.length();
-                            DecimalFormat df = new DecimalFormat("0.00");
-                            if (fileLen > 1024 * 1024) {
-                                jsonObject.put("size", df.format(fileLen * 1f / 1024 / 1024) + "MB");
-                            } else if (fileLen > 1024) {
-                                jsonObject.put("size", df.format(fileLen * 1f / 1024) + "KB");
-                            } else {
-                                jsonObject.put("size", fileLen + "B");
+                if (fileNames != null) {
+                    for (String fileName : fileNames) {
+                        File file = new File(dir, fileName);
+                        if (file.exists() && file.isFile()) {
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("name", fileName);
+                                long fileLen = file.length();
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                if (fileLen > 1024 * 1024) {
+                                    jsonObject.put("size", df.format(fileLen * 1f / 1024 / 1024) + "MB");
+                                } else if (fileLen > 1024) {
+                                    jsonObject.put("size", df.format(fileLen * 1f / 1024) + "KB");
+                                } else {
+                                    jsonObject.put("size", fileLen + "B");
+                                }
+                                array.put(jsonObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            array.put(jsonObject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -152,7 +153,7 @@ public class WebService extends Service {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                File file = new File(getExternalFilesDir(null) + Constants.DIR_IN_SDCARD + path);
+                File file = new File(Constants.DIR, path);
                 if (file.exists() && file.isFile()) {
                     file.delete();
                     RxBus.get().post(Constants.RxBusEventType.LOAD_BOOK_LIST, 0);
@@ -168,7 +169,7 @@ public class WebService extends Service {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            File file = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + path);
+            File file = new File(Constants.DIR, path);
             if (file.exists() && file.isFile()) {
                 try {
                     response.getHeaders().add("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file.getName(), "utf-8"));
@@ -308,11 +309,12 @@ public class WebService extends Service {
         return "";
     }
 
-    class FileUploadHolder {
+    public class FileUploadHolder {
         private String fileName;
         private File recievedFile;
         private BufferedOutputStream fileOutPutStream;
         private long totalSize;
+
 
         public BufferedOutputStream getFileOutPutStream() {
             return fileOutPutStream;
@@ -321,9 +323,11 @@ public class WebService extends Service {
         public void setFileName(String fileName) {
             this.fileName = fileName;
             totalSize = 0;
-            this.recievedFile = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + this.fileName);
+            if (!Constants.DIR.exists()) {
+                Constants.DIR.mkdirs();
+            }
+            this.recievedFile = new File(Constants.DIR, this.fileName);
             Timber.d(recievedFile.getAbsolutePath());
-            recievedFile.getParentFile().mkdirs();
             try {
                 fileOutPutStream = new BufferedOutputStream(new FileOutputStream(recievedFile));
             } catch (FileNotFoundException e) {

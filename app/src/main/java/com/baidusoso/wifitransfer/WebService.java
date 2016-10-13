@@ -34,6 +34,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 
+import timber.log.Timber;
+
 public class WebService extends Service {
 
     static final String ACTION_START_WEB_SERVICE = "com.baidusoso.wifitransfer.action.START_WEB_SERVICE";
@@ -113,11 +115,11 @@ public class WebService extends Service {
         //query upload list
         server.get("/files", (AsyncHttpServerRequest request, AsyncHttpServerResponse response) -> {
             JSONArray array = new JSONArray();
-            File dir = new File(Environment.getExternalStorageDirectory() + Constants.DIR_IN_SDCARD);
+            File dir = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD);
             if (dir.exists() && dir.isDirectory()) {
                 String[] fileNames = dir.list();
                 for (String fileName : fileNames) {
-                    File file = new File(Environment.getExternalStorageDirectory() + Constants.DIR_IN_SDCARD + fileName);
+                    File file = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + fileName);
                     if (file.exists()) {
                         try {
                             JSONObject jsonObject = new JSONObject();
@@ -150,7 +152,7 @@ public class WebService extends Service {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                File file = new File(Environment.getExternalStorageDirectory() + Constants.DIR_IN_SDCARD + path);
+                File file = new File(getExternalFilesDir(null) + Constants.DIR_IN_SDCARD + path);
                 if (file.exists() && file.isFile()) {
                     file.delete();
                     RxBus.get().post(Constants.RxBusEventType.LOAD_BOOK_LIST, 0);
@@ -166,7 +168,7 @@ public class WebService extends Service {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            File file = new File(Environment.getExternalStorageDirectory() + Constants.DIR_IN_SDCARD + path);
+            File file = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + path);
             if (file.exists() && file.isFile()) {
                 try {
                     response.getHeaders().add("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file.getName(), "utf-8"));
@@ -306,7 +308,7 @@ public class WebService extends Service {
         return "";
     }
 
-    static class FileUploadHolder {
+    class FileUploadHolder {
         private String fileName;
         private File recievedFile;
         private BufferedOutputStream fileOutPutStream;
@@ -319,7 +321,9 @@ public class WebService extends Service {
         public void setFileName(String fileName) {
             this.fileName = fileName;
             totalSize = 0;
-            this.recievedFile = new File(Environment.getExternalStorageDirectory() + Constants.DIR_IN_SDCARD + this.fileName);
+            this.recievedFile = new File(getExternalFilesDir(null)  + Constants.DIR_IN_SDCARD + this.fileName);
+            Timber.d(recievedFile.getAbsolutePath());
+            recievedFile.mkdirs();
             try {
                 fileOutPutStream = new BufferedOutputStream(new FileOutputStream(recievedFile));
             } catch (FileNotFoundException e) {
